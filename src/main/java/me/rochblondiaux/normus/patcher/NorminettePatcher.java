@@ -8,9 +8,8 @@ import me.rochblondiaux.normus.model.file.FileState;
 import me.rochblondiaux.normus.model.file.NormeFile;
 import me.rochblondiaux.normus.utils.FileUtils;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,6 +39,7 @@ public class NorminettePatcher {
     @SneakyThrows
     private void patchError(@NonNull NormeFile normeFile, @NonNull NormeError error) {
         File file = normeFile.getFile();
+        List<String> lines = normeFile.getLines();
         switch (error.getType()) {
             case CONSECUTIVE_SPC:
                 break;
@@ -54,12 +54,32 @@ public class NorminettePatcher {
                 FileUtils.insertHeader(file, HeaderGenerator.generateHeader(file));
                 break;
             case BRACE_SHOULD_EOL:
-                BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
-                writer.append("\n");
-                writer.close();
+                lines.add("\n");
+                Files.write(file.toPath(), lines);
                 break;
             case SPACE_BEFORE_FUNC:
-                
+            case TOO_MANY_TABS_FUNC:
+                for (String line : normeFile.getLines()) {
+                    Matcher matcher = functionPattern.matcher(line);
+                    if (matcher.find())
+                        FileUtils.replace(file, matcher.group(), matcher.group().replaceAll("(\\s+)", "\t"));
+                }
+                break;
+            case EMPTY_LINE_FILE_START:
+                lines.remove(0);
+                Files.write(file.toPath(), lines);
+                break;
+            case EMPTY_LINE_EOF:
+                lines.remove(lines.size() - 1);
+                Files.write(file.toPath(), lines);
+            case EMPTY_LINE_FUNCTION:
+            case CONSECUTIVE_NEWLINES:
+                if (error.getLine() >= lines.size())
+                    return;
+                lines.remove(error.getLine() - 1);
+                Files.write(file.toPath(), lines);
+                break;
+            case MISALIGNED_VAR_DECL:
                 break;
         }
     }
