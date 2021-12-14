@@ -18,6 +18,7 @@ public class NormeFile {
 
     private final File file;
     private FileState state = FileState.DIRTY;
+    private final List<String> lines = new LinkedList<>();
     private final List<NormeError> errors = new LinkedList<>();
 
 }

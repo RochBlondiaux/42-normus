@@ -10,8 +10,10 @@ import me.rochblondiaux.normus.model.file.NormeFile;
 import me.rochblondiaux.normus.utils.ParsingUtils;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,36 +39,34 @@ public class OutputParser {
     @SneakyThrows
     public void parse() {
         List<String> lines = executor.call();
-        for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i);
-
+        NormeFile normeFile = null;
+        for (String line : lines) {
             Matcher matcher = pattern.matcher(line);
-            if (!matcher.find() || !isFileHeader(line))
-                continue;
-            File file = new File(matcher.group());
-            if (!file.exists())
-                continue;
-            NormeFile normeFile = new NormeFile(file);
-            files.add(normeFile);
-            if (okPattern.matcher(line).find()) {
-                normeFile.setState(FileState.CLEAN);
+            if (matcher.find() && isFileHeader(line)) {
+                File file = new File(matcher.group());
+                if (!file.exists())
+                    continue;
+                normeFile = new NormeFile(file);
+                if (okPattern.matcher(line).find())
+                    normeFile.setState(FileState.CLEAN);
+                normeFile.getLines().addAll(Files.readAllLines(file.toPath()));
+                files.add(normeFile);
                 continue;
             }
-            while ((line = lines.get(i++)) != null) {
-                parseLine(line).ifPresent(normeError -> normeFile.getErrors().add(normeError));
-                if (lines.size() <= i || (lines.size() > i + 1 && isFileHeader(lines.get(i + 1))))
-                    break;
-            }
+            if (Objects.isNull(normeFile))
+                continue;
+            NormeFile finalNormeFile = normeFile;
+            parseLine(line).ifPresent(normeError -> finalNormeFile.getErrors().add(normeError));
         }
     }
 
     private Optional<NormeError> parseLine(@NonNull String line) {
-        line = line.replace("Error: ", "");
         String[] words = ParsingUtils.cleanArray(line.split(" "));
-        return ParsingUtils.getErrorType(words[0])
+        System.out.println(" ");
+        return ParsingUtils.getErrorType(words[1])
                 .map(errorType -> new NormeError(errorType,
-                        ParsingUtils.getIntFromString(words[2]).orElse(-1),
-                        ParsingUtils.getIntFromString(words[4]).orElse(-1)));
+                        ParsingUtils.getIntFromString(words[3]).orElse(-1),
+                        ParsingUtils.getIntFromString(words[5]).orElse(-1)));
     }
 
     private boolean isFileHeader(@NonNull String line) {
