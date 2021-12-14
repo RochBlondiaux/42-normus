@@ -3,7 +3,6 @@ package me.rochblondiaux.normus.utils;
 import lombok.NonNull;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
@@ -26,6 +25,12 @@ public class FileUtils {
         lines = lines.stream()
                 .map(s -> s.replace(key, value))
                 .collect(Collectors.toList());
+        Files.write(file.toPath(), lines);
+    }
+
+    public static void updateLine(@NonNull File file, int index, String line) throws IOException {
+        List<String> lines = Files.readAllLines(file.toPath());
+        lines.set(index, line);
         Files.write(file.toPath(), lines);
     }
 }

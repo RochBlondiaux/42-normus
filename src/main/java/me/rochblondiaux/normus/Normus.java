@@ -29,10 +29,10 @@ public class Normus {
         this.patcher = new NormusPatcher(parser);
         try (ProgressBar pb = new ProgressBar("Normus", remainingErrors)) {
             pb.setExtraMessage("Patching...");
-            pb.maxHint((remainingErrors = patcher.patch()) + 1);
+            pb.maxHint((remainingErrors = patcher.patch(pb)) + 1);
             while (remainingErrors > 0)
             {
-                remainingErrors = patcher.patch();
+                remainingErrors = patcher.patch(pb);
                 pb.stepTo(pb.getMax() - remainingErrors);
             }
         }

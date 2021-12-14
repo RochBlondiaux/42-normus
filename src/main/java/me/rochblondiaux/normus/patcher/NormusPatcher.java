@@ -9,6 +9,8 @@ import me.rochblondiaux.normus.model.file.NormeFile;
 import me.rochblondiaux.normus.model.regex.NormusRegexes;
 import me.rochblondiaux.normus.parsing.NormusParser;
 import me.rochblondiaux.normus.utils.FileUtils;
+import me.rochblondiaux.normus.utils.StringUtils;
+import me.tongfei.progressbar.ProgressBar;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +30,7 @@ public class NormusPatcher {
 
     private final NormusParser parser;
 
-    public int patch() throws IOException, InterruptedException {
+    public int patch(@NonNull ProgressBar pb) throws IOException, InterruptedException {
         List<NormeFile> files;
         try {
             files = parser.parse()
@@ -43,15 +45,16 @@ public class NormusPatcher {
             log.info("All files were patched successfully!");
             return 0;
         }
-        patchFile(files.get(0));
+        patchFile(pb, files.get(0));
         AtomicInteger errors = new AtomicInteger();
         this.parser.parse()
                 .forEach(file -> errors.addAndGet(file.getErrors().size()));
         return errors.get();
     }
 
-    public void patchFile(@NonNull NormeFile file) {
+    public void patchFile(@NonNull ProgressBar pb, @NonNull NormeFile file) {
         try {
+            pb.setExtraMessage("Patching " + file.getErrors().get(0).getType().name());
             patchError(file, file.getErrors().get(0));
         } catch (IOException e) {
             log.severe(String.format("Cannot patch error at line %d in %s: %s", file.getErrors().get(0).getLine(), file.getFile().getPath(), e.getMessage()));
@@ -61,13 +64,17 @@ public class NormusPatcher {
     public void patchError(@NonNull NormeFile normeFile, @NonNull NormeError error) throws IOException {
         File file = normeFile.getFile();
         List<String> lines = normeFile.getLines();
-        System.out.println("Fixing " + error.getType().name() + "...");
+        Matcher matcher;
+        String line = normeFile.getLines()
+                .get(error.getLine() - 1);
+
         switch (error.getType()) {
             case CONSECUTIVE_SPC:
+                FileUtils.updateLine(file, error.getLine() - 1, HeaderGenerator.remove_spaces(line, "", 1));
                 break;
             case BRACE_NEWLINE:
-                for (String line : normeFile.getLines()) {
-                    Matcher matcher = NormusRegexes.BRACE.getMatcher(line);
+                for (String l : normeFile.getLines()) {
+                    matcher = NormusRegexes.BRACE.getMatcher(l);
                     if (matcher.find())
                         FileUtils.replace(file, matcher.group(), "\n{");
                 }
@@ -81,8 +88,8 @@ public class NormusPatcher {
                 break;
             case SPACE_BEFORE_FUNC:
             case TOO_MANY_TABS_FUNC:
-                for (String line : normeFile.getLines()) {
-                    Matcher matcher = NormusRegexes.FUNCTION.getMatcher(line);
+                for (String l : normeFile.getLines()) {
+                    matcher = NormusRegexes.FUNCTION.getMatcher(l);
                     if (matcher.find())
                         FileUtils.replace(file, matcher.group(), matcher.group().replaceAll("(\\s+)", "\t"));
                 }
@@ -101,8 +108,36 @@ public class NormusPatcher {
                 lines.remove(error.getLine() - 1);
                 Files.write(file.toPath(), lines);
                 break;
-            case MISALIGNED_VAR_DECL:
+
+
+            case TOO_MANY_LINES:
+                // I don't rly know what to do w/ this one
+                // Actually I guess I'm gonna ignore it and notify it at program exit
+                // I mean ignore it in parsing
                 break;
+
+            case LINE_TOO_LONG:
+                // I don't know wtd w this one too
+                // I may implement it later, but I'm not sure at all
+                break;
+
+            case MISALIGNED_VAR_DECL:
+            case SPACE_REPLACE_TAB:
+            case TAB_INSTEAD_SPC:
+            case TOO_FEW_TAB:
+            case SPACE_EMPTY_LINE:
+            case WRONG_SCOPE:
+            case FORBIDDEN_CS:
+            case WRONG_SCOPE_COMMENT:
+                // TODO: Code those issue patchers
+                break;
+
+            // TODO: Manage to change structures, union, enum, globals, ... name according to this pdf: https://github.com/42School/norminette/blob/master/pdf/fr.norme.pdf
+            // TODO: Change variable name too
+            // TODO: & filename ^^
+            // TODO: Remove non ascii characters from code & filename, variable name, ...
+            // TODO: Check for forbidden strctures
+            // TODO: Fix comments
         }
     }
 }

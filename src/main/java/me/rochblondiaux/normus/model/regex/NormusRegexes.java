@@ -18,7 +18,8 @@ public enum NormusRegexes {
     FILE_ERROR_HEADER(".*[.][a-zA-Z0-9]*: Error!"),
     FILE_OK_HEADER(".*[.][a-zA-Z0-9]*: OK!"),
     BRACE("[\\s+]*[{]"),
-    FUNCTION("^(\\w+(\\s+)?){2,}\\([^!@#$+%^]+?\\)");
+    FUNCTION("^(\\w+(\\s+)?){2,}\\([^!@#$+%^]+?\\)"),
+    SPACES("[\\s+]"),;
 
     private final String regex;
 
