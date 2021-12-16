@@ -24,6 +24,8 @@ public enum NormusRegexes {
     RETURN("(\\w+(\\s+)?){2,}[;]"),
     TYPE_DEF("(})(\\s+)(\\w+(\\s+)?)(;)"),
     VARIABLES("([(*)(\\w+)(*)]((\\s+))?){1,}(;)"),
+    PARENTHESIS_BRACES("(\\w)((\\()|(\\[)|(\\{))"),
+
     ;
 
     private final String regex;

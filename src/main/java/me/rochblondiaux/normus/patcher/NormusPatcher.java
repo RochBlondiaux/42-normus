@@ -164,6 +164,15 @@ public class NormusPatcher {
             case NL_AFTER_VAR_DECL:
                 FileUtils.insertLine(file, index, "");
                 break;
+            case SPACE_AFTER_KW:
+            case SPC_BFR_PAR:
+                matcher = NormusRegexes.PARENTHESIS_BRACES.getMatcher(line);
+                if (matcher.find() && matcher.groupCount() >= 2)
+                {
+                    builder.insert(matcher.end(2) - 1, ' ');
+                    FileUtils.updateLine(file, index, builder.toString());
+                }
+                break;
 
             case LINE_TOO_LONG:
                 // I don't know wtd w this one too
