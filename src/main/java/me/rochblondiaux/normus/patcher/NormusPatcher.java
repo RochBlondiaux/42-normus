@@ -148,6 +148,11 @@ public class NormusPatcher {
                 builder.deleteCharAt(builder.length() - 1);
                 FileUtils.updateLine(file, index, builder.toString());
                 break;
+            case USER_DEFINED_TYPEDEF:
+                matcher = NormusRegexes.TYPE_DEF.getMatcher(line);
+                if (matcher.find() && matcher.groupCount() >= 3)
+                    FileUtils.updateLine(file, index, line.replace(matcher.group(3), "t_" + matcher.group(3)));
+                break;
 
 
             case LINE_TOO_LONG:
