@@ -135,6 +135,12 @@ public class NormusPatcher {
                 if (matcher.find() && matcher.groupCount() >= 2)
                     FileUtils.updateLine(file, index, line.replace(matcher.group(1), '(' + matcher.group(1) + ')'));
                 break;
+            case FORBIDDEN_CHAR_NAME:
+                builder.setCharAt(error.getIndex(), Character.toLowerCase(builder.charAt(error.getIndex())));
+                builder.insert(error.getIndex(), '_');
+                FileUtils.updateLine(file, index, builder.toString());
+                break;
+
             case LINE_TOO_LONG:
                 // I don't know wtd w this one too
                 // I may implement it later, but I'm not sure at all
