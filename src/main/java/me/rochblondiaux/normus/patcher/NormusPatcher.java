@@ -181,6 +181,14 @@ public class NormusPatcher {
                     FileUtils.updateLine(file, index, builder.toString());
                 }
                 break;
+            case MACRO_NAME_CAPITAL:
+                matcher = NormusRegexes.MACRO.getMatcher(line);
+                if (matcher.find() && matcher.groupCount() >= 5)
+                {
+                    builder.replace(matcher.start(5), matcher.end(5), matcher.group().toUpperCase());
+                    FileUtils.updateLine(file, index, builder.toString());
+                }
+                break;
 
             case LINE_TOO_LONG:
                 // I don't know wtd w this one too

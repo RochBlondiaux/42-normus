@@ -26,6 +26,7 @@ public enum NormusRegexes {
     VARIABLES("([(*)(\\w+)(*)]((\\s+))?){1,}(;)"),
     PARENTHESIS_BRACES("(\\w)((\\()|(\\[)|(\\{))"),
     EMPTY_FUNCTION("^(.(\\s+)?){2,}(\\(\\))"),
+    MACRO("(#)(\\s+)(define)(((.(\\s+)?){2,}(\\s+))(\\())"),
     ;
 
     private final String regex;

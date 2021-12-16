@@ -32,6 +32,7 @@ public enum ErrorType {
     SPACE_AFTER_KW,
     SPC_BFR_PAR,
     NO_ARGS_VOID,
+    MACRO_NAME_CAPITAL,
 
     // NOT IMPLEMENTED YET
     LINE_TOO_LONG,
