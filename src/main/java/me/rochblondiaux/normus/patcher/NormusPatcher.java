@@ -173,6 +173,14 @@ public class NormusPatcher {
                     FileUtils.updateLine(file, index, builder.toString());
                 }
                 break;
+            case NO_ARGS_VOID:
+                matcher = NormusRegexes.EMPTY_FUNCTION.getMatcher(line);
+                if (matcher.find() && matcher.groupCount() >= 3)
+                {
+                    builder.insert(matcher.end(3) - 1, "void");
+                    FileUtils.updateLine(file, index, builder.toString());
+                }
+                break;
 
             case LINE_TOO_LONG:
                 // I don't know wtd w this one too

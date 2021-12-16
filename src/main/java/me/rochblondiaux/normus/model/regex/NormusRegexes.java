@@ -18,14 +18,14 @@ public enum NormusRegexes {
     FILE_ERROR_HEADER(".*[.][a-zA-Z0-9]*: Error!"),
     FILE_OK_HEADER(".*[.][a-zA-Z0-9]*: OK!"),
     BRACE("[\\s+]*[{]"),
-    FUNCTION("^(\\w+(\\s+)?){2,}\\([^!@#$+%^]+?\\)"),
+    FUNCTION("^(.(\\s+)?){2,}\\([^!@#$+%^]+?\\)"),
     SPACES("[\\s+]"),
     WHITE_SPACES("[ ]+"),
     RETURN("(\\w+(\\s+)?){2,}[;]"),
     TYPE_DEF("(})(\\s+)(\\w+(\\s+)?)(;)"),
     VARIABLES("([(*)(\\w+)(*)]((\\s+))?){1,}(;)"),
     PARENTHESIS_BRACES("(\\w)((\\()|(\\[)|(\\{))"),
-
+    EMPTY_FUNCTION("^(.(\\s+)?){2,}(\\(\\))"),
     ;
 
     private final String regex;

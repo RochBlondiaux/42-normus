@@ -31,6 +31,7 @@ public enum ErrorType {
     NL_AFTER_VAR_DECL,
     SPACE_AFTER_KW,
     SPC_BFR_PAR,
+    NO_ARGS_VOID,
 
     // NOT IMPLEMENTED YET
     LINE_TOO_LONG,
