@@ -23,6 +23,7 @@ public enum NormusRegexes {
     WHITE_SPACES("[ ]+"),
     RETURN("(\\w+(\\s+)?){2,}[;]"),
     TYPE_DEF("(})(\\s+)(\\w+(\\s+)?)(;)"),
+    VARIABLES("([(*)(\\w+)(*)]((\\s+))?){1,}(;)"),
     ;
 
     private final String regex;

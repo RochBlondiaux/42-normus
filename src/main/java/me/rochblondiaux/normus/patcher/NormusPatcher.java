@@ -153,7 +153,14 @@ public class NormusPatcher {
                 if (matcher.find() && matcher.groupCount() >= 3)
                     FileUtils.updateLine(file, index, line.replace(matcher.group(3), "t_" + matcher.group(3)));
                 break;
-
+            case GLOBAL_VAR_NAMING:
+                matcher = NormusRegexes.VARIABLES.getMatcher(line);
+                if (matcher.find() && matcher.groupCount() > 0)
+                {
+                    builder.replace(matcher.start(1), matcher.end(1), "g_" + matcher.group(1));
+                    FileUtils.updateLine(file, index, builder.toString());
+                }
+                break;
 
             case LINE_TOO_LONG:
                 // I don't know wtd w this one too
