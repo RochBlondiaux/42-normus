@@ -9,7 +9,6 @@ import me.rochblondiaux.normus.model.file.NormeFile;
 import me.rochblondiaux.normus.model.regex.NormusRegexes;
 import me.rochblondiaux.normus.parsing.NormusParser;
 import me.rochblondiaux.normus.utils.FileUtils;
-import me.rochblondiaux.normus.utils.StringUtils;
 import me.tongfei.progressbar.ProgressBar;
 
 import java.io.File;
@@ -65,12 +64,15 @@ public class NormusPatcher {
         File file = normeFile.getFile();
         List<String> lines = normeFile.getLines();
         Matcher matcher;
-        String line = normeFile.getLines()
-                .get(error.getLine() - 1);
+        int index = error.getLine() - 1;
+        String line = normeFile.getLines().get(index);
+        StringBuilder builder = new StringBuilder(line);
+        if (error.getLine() >= lines.size())
+            return;
 
         switch (error.getType()) {
             case CONSECUTIVE_SPC:
-                FileUtils.updateLine(file, error.getLine() - 1, HeaderGenerator.remove_spaces(line, "", 1));
+                FileUtils.updateLine(file, index, HeaderGenerator.remove_spaces(line, "", 1));
                 break;
             case BRACE_NEWLINE:
                 for (String l : normeFile.getLines()) {
@@ -103,13 +105,30 @@ public class NormusPatcher {
                 Files.write(file.toPath(), lines);
             case EMPTY_LINE_FUNCTION:
             case CONSECUTIVE_NEWLINES:
-                if (error.getLine() >= lines.size())
-                    return;
-                lines.remove(error.getLine() - 1);
+            case WRONG_SCOPE_COMMENT:
+            case INCLUDE_HEADER_ONLY:
+                lines.remove(index);
                 Files.write(file.toPath(), lines);
                 break;
-
-
+            case SPACE_EMPTY_LINE:
+                builder.deleteCharAt(error.getIndex());
+                FileUtils.updateLine(file, index, builder.toString());
+                break;
+            case TAB_INSTEAD_SPC:
+                builder.setCharAt(error.getIndex(), ' ');
+                FileUtils.updateLine(file, index, builder.toString());
+                break;
+            case SPACE_REPLACE_TAB:
+                matcher = NormusRegexes.WHITE_SPACES.getMatcher(line);
+                if (!matcher.find())
+                    return;
+                FileUtils.updateLine(file, index, matcher.replaceAll(matchResult -> {
+                    int tabs = matchResult.group().length() / 4;
+                    if (tabs == 0)
+                        tabs++;
+                    return "\t".repeat(tabs);
+                }));
+                break;
             case TOO_MANY_LINES:
                 // I don't rly know what to do w/ this one
                 // Actually I guess I'm gonna ignore it and notify it at program exit
@@ -122,13 +141,8 @@ public class NormusPatcher {
                 break;
 
             case MISALIGNED_VAR_DECL:
-            case SPACE_REPLACE_TAB:
-            case TAB_INSTEAD_SPC:
-            case TOO_FEW_TAB:
-            case SPACE_EMPTY_LINE:
             case WRONG_SCOPE:
             case FORBIDDEN_CS:
-            case WRONG_SCOPE_COMMENT:
                 // TODO: Code those issue patchers
                 break;
 

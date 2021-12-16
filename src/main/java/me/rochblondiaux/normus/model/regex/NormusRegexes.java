@@ -19,7 +19,9 @@ public enum NormusRegexes {
     FILE_OK_HEADER(".*[.][a-zA-Z0-9]*: OK!"),
     BRACE("[\\s+]*[{]"),
     FUNCTION("^(\\w+(\\s+)?){2,}\\([^!@#$+%^]+?\\)"),
-    SPACES("[\\s+]"),;
+    SPACES("[\\s+]"),
+    WHITE_SPACES("[ ]+"),
+    ;
 
     private final String regex;
 
