@@ -161,6 +161,9 @@ public class NormusPatcher {
                     FileUtils.updateLine(file, index, builder.toString());
                 }
                 break;
+            case NL_AFTER_VAR_DECL:
+                FileUtils.insertLine(file, index, "");
+                break;
 
             case LINE_TOO_LONG:
                 // I don't know wtd w this one too

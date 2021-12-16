@@ -33,4 +33,10 @@ public class FileUtils {
         lines.set(index, line);
         Files.write(file.toPath(), lines);
     }
+
+    public static void insertLine(@NonNull File file, int index, String line) throws IOException {
+        List<String> lines = Files.readAllLines(file.toPath());
+        lines.add(index, line);
+        Files.write(file.toPath(), lines);
+    }
 }
