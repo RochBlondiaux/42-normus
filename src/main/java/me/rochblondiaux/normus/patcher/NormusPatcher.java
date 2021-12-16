@@ -140,6 +140,11 @@ public class NormusPatcher {
                 builder.insert(error.getIndex(), '_');
                 FileUtils.updateLine(file, index, builder.toString());
                 break;
+            case MISSING_IDENTIFIER:
+                builder.insert(error.getIndex() - 3, "void *");
+                FileUtils.updateLine(file, index, builder.toString());
+                break;
+
 
             case LINE_TOO_LONG:
                 // I don't know wtd w this one too
