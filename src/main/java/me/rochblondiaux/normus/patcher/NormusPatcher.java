@@ -144,6 +144,10 @@ public class NormusPatcher {
                 builder.insert(error.getIndex() - 3, "void *");
                 FileUtils.updateLine(file, index, builder.toString());
                 break;
+            case SPC_BEFORE_NL:
+                builder.deleteCharAt(builder.length() - 1);
+                FileUtils.updateLine(file, index, builder.toString());
+                break;
 
 
             case LINE_TOO_LONG:
