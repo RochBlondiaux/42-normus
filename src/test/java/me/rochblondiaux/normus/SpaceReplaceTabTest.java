@@ -1,10 +1,8 @@
 package me.rochblondiaux.normus;
 
 import me.rochblondiaux.normus.model.regex.NormusRegexes;
-import org.junit.jupiter.api.ClassOrderer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestClassOrder;
 
 import java.util.regex.Matcher;
 
@@ -12,7 +10,6 @@ import java.util.regex.Matcher;
  * @author Roch Blondiaux
  * www.roch-blondiaux.com
  */
-@TestClassOrder(ClassOrderer.OrderAnnotation.class)
 public class SpaceReplaceTabTest {
 
     String apply(String a, int i) {
@@ -38,12 +35,10 @@ public class SpaceReplaceTabTest {
 
     @DisplayName("Common case")
     @Test
-    void testCommonCase()
-    {
+    void testCommonCase() {
         String test = "      int  a;";
         String after = apply(test, 5);
         after = apply(after, 7);
-        System.out.println(after.replace(' ', '0').replace('\t', '1'));
         assert after.equals("\t\tint\ta;");
     }
 }

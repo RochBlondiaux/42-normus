@@ -123,18 +123,18 @@ public class NormusPatcher {
                 if (!matcher.find())
                     return;
                 FileUtils.updateLine(file, index, matcher.replaceAll(matchResult -> {
-                    int tabs = matchResult.group().length() / 4;
+                    double tabs = matchResult.group().length() / 4d;
                     if (tabs == 0)
-                        tabs++;
-                    return "\t".repeat(tabs);
+                        tabs += 1;
+                    return "\t".repeat((int) Math.ceil(tabs));
                 }));
                 break;
-            case TOO_MANY_LINES:
-                // I don't rly know what to do w/ this one
-                // Actually I guess I'm gonna ignore it and notify it at program exit
-                // I mean ignore it in parsing
+            case RETURN_PARENTHESIS:
+                line = line.replaceAll("\\s\\s+", " ");
+                matcher = NormusRegexes.RETURN.getMatcher(line);
+                if (matcher.find() && matcher.groupCount() >= 2)
+                    FileUtils.updateLine(file, index, line.replace(matcher.group(1), '(' + matcher.group(1) + ')'));
                 break;
-
             case LINE_TOO_LONG:
                 // I don't know wtd w this one too
                 // I may implement it later, but I'm not sure at all

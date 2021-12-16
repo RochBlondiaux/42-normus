@@ -21,6 +21,7 @@ public enum NormusRegexes {
     FUNCTION("^(\\w+(\\s+)?){2,}\\([^!@#$+%^]+?\\)"),
     SPACES("[\\s+]"),
     WHITE_SPACES("[ ]+"),
+    RETURN("(\\w+(\\s+)?){2,}[;]"),
     ;
 
     private final String regex;
