@@ -11,6 +11,6 @@ import java.util.List;
  */
 public interface ActionConsumer {
 
-    List<String> patch(@NonNull ErrorContext context);
+   void patch(@NonNull ErrorContext context);
 
 }

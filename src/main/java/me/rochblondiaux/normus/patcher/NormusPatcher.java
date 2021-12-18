@@ -74,32 +74,6 @@ public class NormusPatcher {
             case CONSECUTIVE_SPC:
                 FileUtils.updateLine(file, index, HeaderGenerator.remove_spaces(line, "", 1));
                 break;
-            case BRACE_NEWLINE:
-                for (String l : normeFile.getLines()) {
-                    matcher = NormusRegexes.BRACE.getMatcher(l);
-                    if (matcher.find())
-                        FileUtils.replace(file, matcher.group(), "\n{");
-                }
-                break;
-            case INVALID_HEADER:
-                FileUtils.insertHeader(file, HeaderGenerator.generateHeader(file));
-                break;
-            case BRACE_SHOULD_EOL:
-                lines.add("\n");
-                Files.write(file.toPath(), lines);
-                break;
-            case SPACE_BEFORE_FUNC:
-            case TOO_MANY_TABS_FUNC:
-                for (String l : normeFile.getLines()) {
-                    matcher = NormusRegexes.FUNCTION.getMatcher(l);
-                    if (matcher.find())
-                        FileUtils.replace(file, matcher.group(), matcher.group().replaceAll("(\\s+)", "\t"));
-                }
-                break;
-            case EMPTY_LINE_FILE_START:
-                lines.remove(0);
-                Files.write(file.toPath(), lines);
-                break;
             case EMPTY_LINE_EOF:
                 lines.remove(lines.size() - 1);
                 Files.write(file.toPath(), lines);

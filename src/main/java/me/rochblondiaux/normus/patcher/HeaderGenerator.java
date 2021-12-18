@@ -2,7 +2,6 @@ package me.rochblondiaux.normus.patcher;
 
 import lombok.NonNull;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -27,9 +26,9 @@ public class HeaderGenerator {
                     "/*                                                                            */\n" +
                     "/* ************************************************************************** */\n";
 
-    public static String generateHeader(@NonNull File file) {
+    public static String generateHeader(@NonNull String filename) {
         Map<String, String> placeholders = new HashMap<>();
-        placeholders.put("{file}", file.getName());
+        placeholders.put("{file}", filename);
         placeholders.put("{email}", "marvin@student.42-lyon.fr");
         placeholders.put("{update_date}", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
         placeholders.put("{creation_date}", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));

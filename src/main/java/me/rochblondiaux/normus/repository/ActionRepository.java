@@ -3,6 +3,7 @@ package me.rochblondiaux.normus.repository;
 import lombok.Data;
 import lombok.NonNull;
 import me.rochblondiaux.normus.model.action.Action;
+import me.rochblondiaux.normus.model.action.ActionConsumer;
 import me.rochblondiaux.normus.model.error.ErrorType;
 
 import java.util.ArrayList;
@@ -17,6 +18,17 @@ import java.util.Optional;
 public class ActionRepository {
 
     private final List<Action> actions = new ArrayList<>();
+
+    public void add(@NonNull ErrorType type, @NonNull ActionConsumer consumer) {
+        if (isRegistered(type))
+            throw new IllegalStateException(String.format("An action is already registered for %s error!", type.name()));
+        this.actions.add(new Action(type, consumer));
+    }
+
+    public void add(@NonNull ActionConsumer consumer, @NonNull ErrorType... types) {
+        for (ErrorType type : types)
+            add(type, consumer);
+    }
 
     public void add(@NonNull Action action) {
         if (isRegistered(action.getErrorType()))

@@ -14,12 +14,6 @@ import java.util.stream.Collectors;
  */
 public class FileUtils {
 
-    public static void insertHeader(@NonNull File file, @NonNull String header) throws IOException {
-        List<String> lines = Files.readAllLines(file.toPath());
-        lines.add(0, header);
-        Files.write(file.toPath(), lines);
-    }
-
     public static void replace(@NonNull File file, @NonNull String key, @NonNull String value) throws IOException {
         List<String> lines = Files.readAllLines(file.toPath());
         lines = lines.stream()

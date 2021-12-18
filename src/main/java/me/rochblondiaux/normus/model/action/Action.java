@@ -10,7 +10,6 @@ import me.rochblondiaux.normus.model.error.ErrorType;
 @Data
 public class Action {
 
-    private final ActionType type;
     private final ErrorType errorType;
     private final ActionConsumer consumer;
 }
