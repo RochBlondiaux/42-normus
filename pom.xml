@@ -21,7 +21,7 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <app.main.class>me.rochblondiaux.normus.Normus</app.main.class>
+        <app.main.class>me.rochblondiaux.normus.NormusLauncher</app.main.class>
     </properties>
 
     <dependencies>

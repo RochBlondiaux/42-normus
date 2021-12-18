@@ -57,7 +57,7 @@ public class NormusParser {
         String[] words = ParsingUtils.cleanArray(line.split(" "));
         return ParsingUtils.getErrorType(words[1])
                 .map(errorType -> new NormeError(errorType,
-                        ParsingUtils.getIntFromString(words[3]).orElse(-1),
+                        ParsingUtils.getIntFromString(words[3]).orElse(0) - 1,
                         ParsingUtils.getIntFromString(words[5]).orElse(-1)));
     }
 
