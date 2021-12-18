@@ -8,11 +8,8 @@ import me.rochblondiaux.normus.model.context.ErrorContext;
 import me.rochblondiaux.normus.model.error.ErrorType;
 import me.rochblondiaux.normus.model.error.NormeError;
 import me.rochblondiaux.normus.model.file.NormeFile;
-import me.rochblondiaux.normus.model.patch.misc.EmptyLineAction;
-import me.rochblondiaux.normus.model.patch.misc.InvalidHeaderAction;
-import me.rochblondiaux.normus.model.patch.regex.BraceNewLineAction;
-import me.rochblondiaux.normus.model.patch.misc.BraceShouldEolAction;
-import me.rochblondiaux.normus.model.patch.regex.SpaceBeforeFunctionAction;
+import me.rochblondiaux.normus.model.patch.misc.*;
+import me.rochblondiaux.normus.model.patch.regex.*;
 import me.rochblondiaux.normus.repository.ActionRepository;
 
 import java.io.IOException;
@@ -34,11 +31,27 @@ public class ActionService {
         /* Regexes */
         this.repository.add(ErrorType.BRACE_NEWLINE, new BraceNewLineAction());
         this.repository.add(new SpaceBeforeFunctionAction(), ErrorType.SPACE_BEFORE_FUNC, ErrorType.TOO_MANY_TABS_FUNC);
+        this.repository.add(ErrorType.NO_ARGS_VOID, new AddVoidArgAction());
+        this.repository.add(ErrorType.RETURN_PARENTHESIS, new AddParenthesisAction());
+        this.repository.add(ErrorType.GLOBAL_VAR_NAMING, new GlobalRenameAction());
+        this.repository.add(new AddSpaceParenthesisAction(), ErrorType.SPACE_AFTER_KW, ErrorType.SPC_BFR_PAR);
+        this.repository.add(ErrorType.USER_DEFINED_TYPEDEF, new RenameTypeDefAction());
 
         /* Misc */
-        this.repository.add(ErrorType.BRACE_SHOULD_EOL, new BraceShouldEolAction());
-        this.repository.add(ErrorType.INVALID_HEADER, new InvalidHeaderAction());
-        this.repository.add(new EmptyLineAction(), ErrorType.EMPTY_LINE_FILE_START, ErrorType.EMPTY_LINE_EOF);
+        this.repository.add(ErrorType.BRACE_SHOULD_EOL, new AddNewLineAction());
+        this.repository.add(ErrorType.INVALID_HEADER, new InsertHeaderAction());
+        this.repository.add(new RemoveLineAction(), ErrorType.EMPTY_LINE_FILE_START,
+                ErrorType.EMPTY_LINE_EOF,
+                ErrorType.EMPTY_LINE_FUNCTION,
+                ErrorType.CONSECUTIVE_NEWLINES,
+                ErrorType.WRONG_SCOPE_COMMENT,
+                ErrorType.INCLUDE_HEADER_ONLY);
+        this.repository.add(ErrorType.SPACE_EMPTY_LINE, new DeleteCharacterAction());
+        this.repository.add(ErrorType.MISSING_IDENTIFIER, new AddIdentifierAction());
+        this.repository.add(ErrorType.FORBIDDEN_CHAR_NAME, new LowercaseAction());
+        this.repository.add(ErrorType.SPC_BEFORE_NL, new RemoveSpaceAction());
+        this.repository.add(ErrorType.NL_AFTER_VAR_DECL, new InsertEmptyLineAction());
+
     }
 
     public void apply(@NonNull NormeFile file, @NonNull NormeError error) {

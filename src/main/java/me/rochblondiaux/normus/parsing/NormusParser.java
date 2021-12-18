@@ -58,7 +58,9 @@ public class NormusParser {
         return ParsingUtils.getErrorType(words[1])
                 .map(errorType -> new NormeError(errorType,
                         ParsingUtils.getIntFromString(words[3]).orElse(0) - 1,
-                        ParsingUtils.getIntFromString(words[5]).orElse(-1)));
+                        ParsingUtils.getIntFromString(words[5])
+                                .map(integer -> ParsingUtils.getRealIndex(line, integer))
+                                .orElse(-1)));
     }
 
     private boolean isFileHeader(@NonNull String line) {

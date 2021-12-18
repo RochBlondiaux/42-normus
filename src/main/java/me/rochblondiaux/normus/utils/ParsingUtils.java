@@ -39,4 +39,13 @@ public class ParsingUtils {
             return Optional.empty();
         return Optional.of(Integer.valueOf(a));
     }
+
+    public static int getRealIndex(@NonNull String line, int index) {
+        /* TODO: find a solution
+        for (int i = 0; i <= index; i++) {
+            if (line.charAt(i) == '\t')
+                index -= 2;
+        }*/
+        return index;
+    }
 }

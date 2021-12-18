@@ -74,20 +74,6 @@ public class NormusPatcher {
             case CONSECUTIVE_SPC:
                 FileUtils.updateLine(file, index, HeaderGenerator.remove_spaces(line, "", 1));
                 break;
-            case EMPTY_LINE_EOF:
-                lines.remove(lines.size() - 1);
-                Files.write(file.toPath(), lines);
-            case EMPTY_LINE_FUNCTION:
-            case CONSECUTIVE_NEWLINES:
-            case WRONG_SCOPE_COMMENT:
-            case INCLUDE_HEADER_ONLY:
-                lines.remove(index);
-                Files.write(file.toPath(), lines);
-                break;
-            case SPACE_EMPTY_LINE:
-                builder.deleteCharAt(error.getIndex());
-                FileUtils.updateLine(file, index, builder.toString());
-                break;
             case TAB_INSTEAD_SPC:
                 builder.setCharAt(error.getIndex(), ' ');
                 FileUtils.updateLine(file, index, builder.toString());
@@ -103,65 +89,10 @@ public class NormusPatcher {
                     return "\t".repeat((int) Math.ceil(tabs));
                 }));
                 break;
-            case RETURN_PARENTHESIS:
-                line = line.replaceAll("\\s\\s+", " ");
-                matcher = NormusRegexes.RETURN.getMatcher(line);
-                if (matcher.find() && matcher.groupCount() >= 2)
-                    FileUtils.updateLine(file, index, line.replace(matcher.group(1), '(' + matcher.group(1) + ')'));
-                break;
-            case FORBIDDEN_CHAR_NAME:
-                builder.setCharAt(error.getIndex(), Character.toLowerCase(builder.charAt(error.getIndex())));
-                builder.insert(error.getIndex(), '_');
-                FileUtils.updateLine(file, index, builder.toString());
-                break;
-            case MISSING_IDENTIFIER:
-                builder.insert(error.getIndex() - 3, "void *");
-                FileUtils.updateLine(file, index, builder.toString());
-                break;
-            case SPC_BEFORE_NL:
-                builder.deleteCharAt(builder.length() - 1);
-                FileUtils.updateLine(file, index, builder.toString());
-                break;
             case USER_DEFINED_TYPEDEF:
                 matcher = NormusRegexes.TYPE_DEF.getMatcher(line);
                 if (matcher.find() && matcher.groupCount() >= 3)
                     FileUtils.updateLine(file, index, line.replace(matcher.group(3), "t_" + matcher.group(3)));
-                break;
-            case GLOBAL_VAR_NAMING:
-                matcher = NormusRegexes.VARIABLES.getMatcher(line);
-                if (matcher.find() && matcher.groupCount() > 0)
-                {
-                    builder.replace(matcher.start(1), matcher.end(1), "g_" + matcher.group(1));
-                    FileUtils.updateLine(file, index, builder.toString());
-                }
-                break;
-            case NL_AFTER_VAR_DECL:
-                FileUtils.insertLine(file, index, "");
-                break;
-            case SPACE_AFTER_KW:
-            case SPC_BFR_PAR:
-                matcher = NormusRegexes.PARENTHESIS_BRACES.getMatcher(line);
-                if (matcher.find() && matcher.groupCount() >= 2)
-                {
-                    builder.insert(matcher.end(2) - 1, ' ');
-                    FileUtils.updateLine(file, index, builder.toString());
-                }
-                break;
-            case NO_ARGS_VOID:
-                matcher = NormusRegexes.EMPTY_FUNCTION.getMatcher(line);
-                if (matcher.find() && matcher.groupCount() >= 3)
-                {
-                    builder.insert(matcher.end(3) - 1, "void");
-                    FileUtils.updateLine(file, index, builder.toString());
-                }
-                break;
-            case MACRO_NAME_CAPITAL:
-                matcher = NormusRegexes.MACRO.getMatcher(line);
-                if (matcher.find() && matcher.groupCount() >= 5)
-                {
-                    builder.replace(matcher.start(5), matcher.end(5), matcher.group().toUpperCase());
-                    FileUtils.updateLine(file, index, builder.toString());
-                }
                 break;
 
             case LINE_TOO_LONG:

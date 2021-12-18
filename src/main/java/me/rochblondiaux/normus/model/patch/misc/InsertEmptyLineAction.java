@@ -8,11 +8,10 @@ import me.rochblondiaux.normus.model.context.ErrorContext;
  * @author Roch Blondiaux
  * www.roch-blondiaux.com
  */
-public class EmptyLineAction implements ActionConsumer {
+public class InsertEmptyLineAction implements ActionConsumer {
 
     @Override
     public void patch(@NonNull ErrorContext context) {
-        context.getLines().remove(context.getLineIndex());
+        context.getLines().add(context.getIndex(), "");
     }
-
 }
